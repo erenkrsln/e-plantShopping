@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import './ProductList.css';
 import CartItem from './CartItem';
 import { addItem } from './CartSlice';
@@ -7,12 +7,19 @@ import { addItem } from './CartSlice';
 function ProductList({ onHomeClick }) {
     const dispatch = useDispatch();
 
+    const CartItems = useSelector(state => state.cart.items);
+
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false);
 
-    // Task 1:
     // Tracks which products have already been added to the cart.
     const [addedToCart, setAddedToCart] = useState({});
+
+    const calculateTotalQuantity = () => {
+        return CartItems
+            ? CartItems.reduce((total, item) => total + item.quantity, 0)
+            : 0;
+    };
 
     const plantsArray = [
         {
@@ -266,7 +273,6 @@ function ProductList({ onHomeClick }) {
         setShowCart(false);
     };
 
-    // Task 1 - Add to Cart functionality
     const handleAddToCart = (product) => {
         dispatch(addItem(product));
 
@@ -332,7 +338,6 @@ function ProductList({ onHomeClick }) {
                                     />
 
                                     <circle cx="80" cy="216" r="12" />
-
                                     <circle cx="184" cy="216" r="12" />
 
                                     <path
@@ -345,6 +350,10 @@ function ProductList({ onHomeClick }) {
                                         id="mainIconPathAttribute"
                                     />
                                 </svg>
+
+                                <span className="cart-count">
+                                    {calculateTotalQuantity()}
+                                </span>
                             </h1>
                         </a>
                     </div>
@@ -353,16 +362,13 @@ function ProductList({ onHomeClick }) {
 
             {!showCart ? (
                 <div className="product-grid">
-
                     {plantsArray.map((category, index) => (
                         <div key={index}>
-
                             <h1>
                                 <div>{category.category}</div>
                             </h1>
 
                             <div className="product-list">
-
                                 {category.plants.map((plant, plantIndex) => (
                                     <div
                                         className="product-card"
@@ -391,9 +397,7 @@ function ProductList({ onHomeClick }) {
                                             onClick={() =>
                                                 handleAddToCart(plant)
                                             }
-                                            disabled={
-                                                addedToCart[plant.name]
-                                            }
+                                            disabled={addedToCart[plant.name]}
                                         >
                                             {addedToCart[plant.name]
                                                 ? 'Added to Cart'
@@ -401,11 +405,9 @@ function ProductList({ onHomeClick }) {
                                         </button>
                                     </div>
                                 ))}
-
                             </div>
                         </div>
                     ))}
-
                 </div>
             ) : (
                 <CartItem

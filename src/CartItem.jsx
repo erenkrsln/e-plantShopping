@@ -66,7 +66,7 @@ const CartItem = ({ onContinueShopping }) => {
       </h2>
 
       <div>
-        {cart.map(item => (
+        {cart.map((item) => (
           <div className="cart-item" key={item.name}>
             <img
               className="cart-item-image"
